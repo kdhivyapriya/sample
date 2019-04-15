@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<proxy name="CacheProxy" startOnLoad="true" transports="http https" xmlns="http://ws.apache.org/ns/synapse">
+    <target>
+        <inSequence>
+            <cache collector="false" hashGenerator="org.wso2.carbon.mediator.cache.digest.DOMHASHGenerator" scope="per-host" timeout="20">
+                <onCacheHit/>
+                <implementation maxSize="100" type="memory"/>
+            </cache>
+            <send>
+                <endpoint name="inlined">
+                    <address uri="http://www.mocky.io/v2/5c73e4e42f00004e00963f2f"/>
+                </endpoint>
+            </send>
+        </inSequence>
+        <outSequence>
+            <cache collector="true" scope="per-host"/>
+            <send/>
+        </outSequence>
+        <faultSequence/>
+    </target>
+</proxy>

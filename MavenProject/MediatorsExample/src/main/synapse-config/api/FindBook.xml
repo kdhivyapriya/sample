@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<api context="/book" name="FindBook" xmlns="http://ws.apache.org/ns/synapse">
+    <resource methods="POST">
+        <inSequence>
+            <property expression="//Name" name="bookRequest" scope="default" type="STRING"/>
+            <property expression="//Book" name="bookSturcture" scope="default" type="OM"/>
+            <log level="custom">
+                <property expression="$ctx:bookSturcture" name="BOOK STRUCTURE"/>
+            </log>
+            <log level="custom">
+                <property expression="get-property('bookRequest')" name="reqbook"/>
+            </log>
+            <call>
+                <endpoint>
+                    <address uri="http://www.mocky.io/v2/5c6a729233000002197f4a78"/>
+                </endpoint>
+            </call>
+            <property expression="//Book[Name=get-property('bookRequest')]/Price" name="findbook" scope="default" type="STRING"/>
+            <log level="custom">
+                <property expression="get-property('findbook')" name="name"/>
+            </log>
+            <loopback/>
+        </inSequence>
+        <outSequence>
+            <payloadFactory media-type="xml">
+                <format>
+                    <BookDetails>
+                        <BookName>$1</BookName>
+                        <Author>$2</Author>
+                        <Price>$3</Price>
+                    </BookDetails>
+                </format>
+                <args>
+                    <arg evaluator="xml" expression="$ctx:bookSturcture//Name"/>
+                    <arg evaluator="xml" expression="$ctx:bookSturcture//Author"/>
+                    <arg evaluator="xml" expression="get-property('findbook')"/>
+                </args>
+            </payloadFactory>
+            <send/>
+        </outSequence>
+        <faultSequence/>
+    </resource>
+</api>

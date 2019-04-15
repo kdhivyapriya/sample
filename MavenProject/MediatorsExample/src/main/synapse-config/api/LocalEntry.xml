@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<api context="/entry" name="LocalEntry" xmlns="http://ws.apache.org/ns/synapse">
+    <resource methods="GET" uri-template="/sample">
+        <inSequence>
+            <property expression="get-property('SampleLocalEntry')" name="PPS_Username" scope="default" type="OM"/>
+            <log level="custom">
+                <property expression="$ctx:PPS_Username//*[local-name()='price']" name="PPS_UsernameB"/>
+            </log>
+        </inSequence>
+        <outSequence>
+            <send/>
+        </outSequence>
+        <faultSequence/>
+    </resource>
+</api>

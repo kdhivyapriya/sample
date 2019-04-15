@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<api context="/ifw/service" name="IFW-Token-API" xmlns="http://ws.apache.org/ns/synapse">
+    <resource methods="GET" uri-template="/1.0">
+        <inSequence>
+            <!--   <cache scope="per-host" collector="false" hashGenerator="org.wso2.caching.digest.DOMHASHGenerator" timeout="30" maxMessageSize="1024">
+            <onCacheHit>
+               <log level="custom">
+                  <property name="Location" value="Inside catche"/>
+               </log>
+               <respond/>
+            </onCacheHit>
+            <implementation type="memory" maxSize="1000"/>
+         </cache> -->
+            <property name="Authorization" scope="transport" type="STRING" value="Basic QUZFOXRIUFVuM3lZVk10RGdRaDluWkdMeEpBYToyZmV0TzdpRXBvSUQwbUJWYnEzYWtmbFppd0Fh"/>
+            <property name="Content_Type" scope="transport" type="STRING" value="application/x-www-form-urlencoded"/>
+            <property expression="$trp:format" name="Format" scope="default" type="STRING"/>
+            <log level="custom">
+                <property expression="get-property('query.param.grantType')" name="grantType"/>
+                <property expression="get-property('Format')" name="OUTPUT_FORMAT"/>
+            </log>
+            <send>
+                <endpoint>
+                    <http method="post" uri-template="http://172.30.80.66:8280/token?grant_type={+query.param.grantType}"/>
+                </endpoint>
+            </send>
+        </inSequence>
+        <outSequence>
+            <!--  <log level="custom">
+                <property name="location" value="Outside catche"/>
+            </log> -->
+            <log level="custom">
+                <property expression="get-property('SYSTEM_TIME') div 1000" name="last_updated_time"/>
+            </log>
+            <property expression="//access_token" name="AccessToken" scope="default" type="STRING"/>
+            <property expression="//token_type" name="TokenType" scope="default" type="STRING"/>
+            <property expression="//expires_in" name="Expires" scope="default" type="STRING"/>
+            <!-- <property expression="json-eval($.expires_in)" name="conf:/Resource/expires_in" scope="registry" type="STRING"/>
+            <property expression="json-eval($.access_token)" name="conf:/Resource/access_token" scope="registry" type="STRING"/>
+            <property expression="get-property('registry','conf:/Resource/last_updated_time')" name="last_updat_time" scope="default" type="STRING"/> -->
+            <property expression="get-property('registry','conf:/Resource/expires_in')" name="registry_expires" scope="default" type="STRING"/>
+            <property expression="get-property('registry','conf:/Resource/access_token')" name="regisrty_access_token" scope="default" type="STRING"/>
+            <property expression="get-property('registry','conf:/Resource/last_updated_time')" name="registry_last_updat_time" scope="default" type="STRING"/>
+            <property expression="get-property('Expires')+get-property('registry_last_updat_time')" name="Result" scope="default" type="STRING"/>
+            <!--   <script language="js">var value1 = parseInt(mc.getProperty("Expires"));            var value2 = parseInt(mc.getProperty("last_updat_time"));            var result = value1 + value2;            mc.setProperty("Result", result); print(result);</script>
+         <property name="fnres" expression="get-property('Result')"/> -->
+            <log level="custom">
+                <property expression="get-property('Result')" name="RESULT"/>
+                <property expression="get-property('SYSTEM_TIME') div 1000" name="time"/>
+            </log>
+            <property expression="get-property('SYSTEM_TIME') div 1000" name="time" scope="default" type="STRING"/>
+            <filter regex="application/json" source="get-property('Format')">
+                <then>
+                    <payloadFactory media-type="json">
+                        <format>              {           "access_token": "$1",           "token_type": "$2",           "expires_in": "$3"       }             </format>
+                        <args>
+                            <arg evaluator="json" expression="$.access_token"/>
+                            <arg evaluator="json" expression="$.token_type"/>
+                            <arg evaluator="json" expression="$.expires_in"/>
+                        </args>
+                    </payloadFactory>
+                </then>
+                <else>
+                    <payloadFactory media-type="xml">
+                        <format>
+                            <accessCredential>
+                                <access_token>$1</access_token>
+                                <expires_in>$2</expires_in>
+                                <token_type>$3</token_type>
+                            </accessCredential>
+                        </format>
+                        <args>
+                            <arg evaluator="xml" expression="$ctx:AccessToken"/>
+                            <arg evaluator="xml" expression="$ctx:TokenType"/>
+                            <arg evaluator="xml" expression="$ctx:Expires"/>
+                        </args>
+                    </payloadFactory>
+                </else>
+            </filter>
+            <filter xpath="get-property('Result') > get-property('time')">
+                <then>
+                    <log level="custom">
+                        <property expression="get-property('expires')" name="expires"/>
+                        <property expression="get-property('access_token')" name="access_token"/>
+                        <property expression="get-property('last_updat_time')" name="last_update_time"/>
+                    </log>
+                    <payloadFactory media-type="xml">
+                        <format>
+                            <root xmlns="">
+                                <access_token>$1</access_token>
+                                <expires_in>$2</expires_in>
+                            </root>
+                        </format>
+                        <args>
+                            <arg evaluator="xml" expression="get-property('access_token')"/>
+                            <arg evaluator="xml" expression="get-property('expires')"/>
+                        </args>
+                    </payloadFactory>
+                </then>
+                <else>
+                    <log level="custom">
+                        <property name="***********" value="CHECK"/>
+                    </log>
+                    <property expression="json-eval($.expires_in)" name="conf:/Resource/expires_in" scope="registry" type="STRING"/>
+                    <property expression="json-eval($.access_token)" name="conf:/Resource/access_token" scope="registry" type="STRING"/>
+                    <property expression="get-property('SYSTEM_TIME') div 1000" name="conf:/Resource/last_updated_time" scope="registry" type="STRING"/>
+                    <payloadFactory media-type="xml">
+                        <format>
+                            <root xmlns="">
+                                <access_token>$1</access_token>
+                                <expires_in>$2</expires_in>
+                            </root>
+                        </format>
+                        <args>
+                            <arg evaluator="xml" expression="get-property('regisrty_access_token')"/>
+                            <arg evaluator="xml" expression="get-property('registry_expires')"/>
+                        </args>
+                    </payloadFactory>
+                </else>
+            </filter>
+            <!--   <cache scope="per-host" collector="true"/> -->
+            <send/>
+        </outSequence>
+        <faultSequence/>
+    </resource>
+</api>

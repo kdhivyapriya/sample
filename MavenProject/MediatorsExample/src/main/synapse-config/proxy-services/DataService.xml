@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<proxy name="DataService" startOnLoad="true" transports="http https" xmlns="http://ws.apache.org/ns/synapse">
+    <target>
+        <inSequence>
+            <!-- <call> <endpoint> <address uri="http://THMTP0071:8282/services/DataSource"/> 
+				<http method="POST" uri-template="http://THMTP0071:8282/services/DataSource"/> 
+				</endpoint> </call> <respond/> -->
+            <!--   <property expression="$url:operation" name="switchOption" scope="default" type="STRING"/>
+            <log>
+                <property expression="$url:id" name="InsertID"/>
+                <property expression="$url:name" name="InsertName"/>
+            </log>
+            <log>
+                <property expression="get-property('switchOption')" name="*************"/>
+            </log>
+            <switch source="$url:operation">
+                <case regex="insert">
+                    <property name="insert" scope="default">
+                        <QueryInsert>
+                            <id>21</id>
+                            <name>dfujhd</name>
+                        </QueryInsert>
+                    </property>
+                    <enrich>
+                        <source clone="true" property="insert" type="property"/>
+                        <target type="body"/>
+                    </enrich>
+                </case>
+                <case regex="select">
+                    <property name="select" scope="default">
+                        <QuerySelect/>
+                    </property>
+                    <enrich>
+                        <source clone="true" property="select" type="property"/>
+                        <target type="body"/>
+                    </enrich>
+                </case>
+                <case regex="update">
+                    <property name="insert" scope="default">
+                        <QueryUpdate>
+                            <id>30</id>
+                            <name>DHIVYA</name>
+                        </QueryUpdate>
+                    </property>
+                    <enrich>
+                        <source clone="true" property="insert" type="property"/>
+                        <target type="body"/>
+                    </enrich>
+                </case>
+                <default/>
+            </switch>
+            <property name="HTTP_METHOD" scope="axis2" type="STRING" value="POST"/>
+            <call>
+                <endpoint>
+                    <address uri="http://THMTP0071:8282/services/DataSource"/>
+                </endpoint>
+            </call>
+            <log level="custom">
+                <property expression="$axis2:HTTP_SC" name="StatusCode"/>
+            </log>
+            <filter regex="500" source="$axis2:HTTP_SC">
+                <then>
+                    <log level="custom">
+                        <property name="****" value="inside status filter"/>
+                    </log>
+                    <sequence key="FaultSequence"/>
+                    <respond/>
+                </then>
+                <else/>
+            </filter>
+            <respond/> -->
+            <property name="Authorization" scope="transport" type="STRING" value="Basic QUZFOXRIUFVuM3lZVk10RGdRaDluWkdMeEpBYToyZmV0TzdpRXBvSUQwbUJWYnEzYWtmbFppd0Fh"/>
+            <property name="Content_Type" scope="transport" type="STRING" value="application/x-www-form-urlencoded"/>
+            <call>
+                <endpoint>
+                    <http method="post" uri-template="http://172.30.80.66:8280/token?grant_type=client_credentials"/>
+                </endpoint>
+            </call>
+            <respond/>
+        </inSequence>
+        <outSequence/>
+        <faultSequence/>
+    </target>
+</proxy>

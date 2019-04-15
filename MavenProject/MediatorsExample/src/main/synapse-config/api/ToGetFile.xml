@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<api context="/file" name="ToGetFile" xmlns="http://ws.apache.org/ns/synapse">
+    <resource methods="GET">
+        <inSequence>
+            <property action="remove" name="NO_ENTITY_BODY" scope="axis2"/>
+            <fileconnector.read>
+                <source>C:\Users\dhivyapriya_kasiling\Documents\sample.pdf</source>
+                <contentType>application/pdf</contentType>
+            </fileconnector.read>
+            <property expression="$trp:Accept" name="AcceptType" scope="default" type="STRING"/>
+            <log>
+                <property expression="get-property('AcceptType')" name="Check_Accept"/>
+            </log>
+            <property expression="source" name="source" scope="default" type="STRING"/>
+            <log>
+                <property expression="get-property('source')" name="SourceFile"/>
+            </log>
+            <!-- <fileconnector.isFileExist>
+                <source>{$ctx:source}</source>
+            </fileconnector.isFileExist> -->
+            <respond/>
+        </inSequence>
+        <outSequence/>
+        <faultSequence/>
+    </resource>
+</api>

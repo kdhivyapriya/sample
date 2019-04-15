@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<api context="/rest/sdh/hierarchy/1.0" name="SDH-Hierachy" xmlns="http://ws.apache.org/ns/synapse">
+    <resource methods="GET" url-mapping="/hierarchies">
+        <inSequence>
+            <log level="custom">
+                <property expression="$url:operation" name="switchOption"/>
+            </log>
+            <property expression="$url:id" name="InsertID" scope="default" type="STRING"/>
+            <property expression="$url:label" name="Label" scope="default" type="STRING"/>
+            <property expression="$url:parentType" name="ParentType" scope="default" type="STRING"/>
+            <property expression="$url:ParentID" name="ParentID" scope="default" type="STRING"/>
+            <property expression="$url:publisher" name="Publisher" scope="default" type="STRING"/>
+            <property expression="//*[local-name()='current_request_name']" name="error" scope="default" type="STRING"/>
+            <switch source="$url:operation">
+                <case regex="select">
+                    <payloadFactory media-type="xml">
+                        <format>
+                            <soapenv:Envelope xmlns:dat="http://ws.wso2.org/dataservice" xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/">
+                                <soapenv:Header/>
+                                <soapenv:Body>
+                                    <dat:QuerySelect/>
+                                </soapenv:Body>
+                            </soapenv:Envelope>
+                        </format>
+                        <args/>
+                    </payloadFactory>
+                    <property name="SOAPAction" scope="transport" type="STRING" value="urn:QuerySelect"/>
+                    <property name="ContentType" scope="axis2" type="STRING" value="text/xml"/>
+                    <!--  <call>
+                        <endpoint>
+                            <address format="soap11" uri="http://THMTP0071:8282/services/SDH-DataSource"/>
+                        </endpoint>
+                    </call> -->
+                </case>
+                <case regex="insert">
+                    <payloadFactory media-type="xml">
+                        <format>
+                            <soapenv:Envelope xmlns:dat="http://ws.wso2.org/dataservice" xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/">
+                                <soapenv:Header/>
+                                <soapenv:Body>
+                                    <dat:QueryInsert>
+                                        <dat:id>$1</dat:id>
+                                        <dat:label>$2</dat:label>
+                                        <dat:parentType>$3</dat:parentType>
+                                        <dat:parentId>$4</dat:parentId>
+                                        <dat:publisher>$5</dat:publisher>
+                                    </dat:QueryInsert>
+                                </soapenv:Body>
+                            </soapenv:Envelope>
+                        </format>
+                        <args>
+                            <arg evaluator="xml" expression="$ctx:InsertID"/>
+                            <arg evaluator="xml" expression="$ctx:Label"/>
+                            <arg evaluator="xml" expression="$ctx:ParentType"/>
+                            <arg evaluator="xml" expression="$ctx:ParentID"/>
+                            <arg evaluator="xml" expression="$ctx:Publisher"/>
+                        </args>
+                    </payloadFactory>
+                    <property name="SOAPAction" scope="transport" type="STRING" value="urn:QueryInsert"/>
+                    <property name="ContentType" scope="axis2" type="STRING" value="text/xml"/>
+                    <!--  <call>
+                        <endpoint>
+                            <address format="soap11" uri="http://THMTP0071:8282/services/SDH-DataSource"/>
+                        </endpoint>
+                    </call> -->
+                </case>
+                <default/>
+            </switch>
+            <!--  <payloadFactory media-type="xml">
+                <format>
+                    <soapenv:Envelope xmlns:dat="http://ws.wso2.org/dataservice" xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/">
+                        <soapenv:Header/>
+                        <soapenv:Body>
+                            <dat:QueryInsert>
+                                <dat:id>$1</dat:id>
+                                <dat:label>$2</dat:label>
+                                <dat:parentType>$3</dat:parentType>
+                                <dat:parentId>$4</dat:parentId>
+                                <dat:publisher>$5</dat:publisher>
+                            </dat:QueryInsert>
+                        </soapenv:Body>
+                    </soapenv:Envelope>
+                </format>
+                <args>
+                    <arg evaluator="xml" expression="$ctx:InsertID"/>
+                    <arg evaluator="xml" expression="$ctx:Label"/>
+                    <arg evaluator="xml" expression="$ctx:ParentType"/>
+                    <arg evaluator="xml" expression="$ctx:ParentID"/>
+                    <arg evaluator="xml" expression="$ctx:Publisher"/>
+                </args>
+            </payloadFactory>
+            <property name="SOAPAction" scope="transport" type="STRING" value="urn:QueryInsert"/>
+            <property name="ContentType" scope="axis2" type="STRING" value="text/xml"/>-->
+            <call>
+                <endpoint>
+                    <address format="soap11" uri="http://THMTP0071:8282/services/SDH-DataSource"/>
+                </endpoint>
+            </call>
+            <property expression="//*[local-name()='nested_exception']" name="exception" scope="default" type="STRING"/>
+            <filter xpath="fn:contains($ctx:exception,'java.lang.NumberFormatException')">
+                <then>
+                    <property name="HTTP_SC" scope="axis2" type="STRING" value="504"/>
+                    <payloadFactory media-type="json">
+                        <format>
+                                    {
+    									"fault": {
+        									"code": "BAD_REQUEST",
+       										"description": "Mandatory input missing - [id]"
+    											}
+									}
+                                </format>
+                        <args/>
+                    </payloadFactory>
+                </then>
+                <else/>
+            </filter>
+            <respond/>
+        </inSequence>
+        <outSequence/>
+        <faultSequence/>
+    </resource>
+</api>

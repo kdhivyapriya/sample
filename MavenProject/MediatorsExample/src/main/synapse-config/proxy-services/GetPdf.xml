@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<proxy name="GetPdf" startOnLoad="true" trace="enable" transports="http https" xmlns="http://ws.apache.org/ns/synapse">
+    <target>
+        <inSequence>
+            <property expression="json-eval( $.Source)" name="filename" scope="default" type="STRING"/>
+            <!--  <log>
+                <property expression="get-property('filename')" name="*****"/>
+            </log> -->
+            <property action="remove" name="PDFReader" scope="axis2"/>
+            <property expression="$url:destinationPath" name="outfile" scope="default" type="STRING"/>
+            <fileconnector.send>
+                <address>{$url:destinationPath}</address>
+            </fileconnector.send>
+            <respond/>
+        </inSequence>
+        <outSequence/>
+        <faultSequence/>
+    </target>
+</proxy>

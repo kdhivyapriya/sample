@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<api context="/example/sample" name="SampleExample" xmlns="http://ws.apache.org/ns/synapse">
+    <resource methods="GET">
+        <inSequence>
+            <property action="remove" name="Accept" scope="transport"/>
+            <!--  <property action="remove" name="TRANSPORT_HEADERS" scope="axis2"/>
+            <property action="remove" name="NO_ENTITY_BODY" scope="axis2"/> -->
+            <property name="Authorization" scope="transport" type="STRING" value="Basic QUZFOXRIUFVuM3lZVk10RGdRaDluWkdMeEpBYToyZmV0TzdpRXBvSUQwbUJWYnEzYWtmbFppd0Fh"/>
+            <property name="Content-Type" scope="transport" type="STRING" value="application/x-www-form-urlencoded"/>
+            <property expression="get-property('registry','conf:Reso/LastUpdatedTime.txt')" name="expiration_time" scope="default" type="STRING"/>
+            <property expression="get-property('registry','conf:Reso/Token.txt')" name="access_token" scope="default" type="STRING"/>
+            <property expression="get-property('registry','conf:Reso/token_type.txt')" name="token_type" scope="default" type="STRING"/>
+            <property expression="$trp:Accept" name="accept" scope="default" type="STRING"/>
+            <log level="custom">
+                <property expression="$trp:Accept" name="CHECKOUTSIDE"/>
+                <property expression="$url:AcceptType" name="accept"/>
+            </log>
+            <filter xpath="get-property('expiration_time') > get-property('SYSTEM_TIME')">
+                <then>
+                    <log level="custom">
+                        <property name="CHECK" value="-----------filter then----------"/>
+                        <property expression="$trp:out" name="CHECKTHEN"/>
+                    </log>
+                    <switch source="$ctx:accept">
+                        <case regex="application/json">
+                            <log level="custom">
+                                <property name="CHECK" value="---------------------"/>
+                            </log>
+                            <payloadFactory media-type="json">
+                                <format>{"access_token": "$1","expires_in": "$2","token_type": "$3"}</format>
+                                <args>
+                                    <arg evaluator="xml" expression="get-property('access_token')"/>
+                                    <arg evaluator="xml" expression="(get-property('expiration_time')-get-property('SYSTEM_TIME')) div 1000"/>
+                                    <arg evaluator="xml" expression="get-property('token_type')"/>
+                                </args>
+                            </payloadFactory>
+                        </case>
+                        <case regex="application/xml">
+                            <payloadFactory media-type="xml">
+                                <format>
+                                    <accessCredential xmlns="">
+                                        <access_token>$1</access_token>
+                                        <token_type>$2</token_type>
+                                        <expires_in>$3</expires_in>
+                                    </accessCredential>
+                                </format>
+                                <args>
+                                    <arg evaluator="xml" expression="get-property('access_token')"/>
+                                    <arg evaluator="xml" expression="get-property('token_type')"/>
+                                    <arg evaluator="xml" expression="(get-property('expiration_time')-get-property('SYSTEM_TIME')) div 1000"/>
+                                </args>
+                            </payloadFactory>
+                            <property name="messageType" scope="axis2" type="STRING" value="application/xml"/>
+                        </case>
+                        <default/>
+                    </switch>
+                </then>
+                <else>
+                    <log level="custom">
+                        <property name="CHECK" value="-----------filter else----------"/>
+                    </log>
+                    <call>
+                        <endpoint>
+                            <http method="post" uri-template="http://172.30.80.66:8280/token?grant_type={+query.param.grantType}&amp;validity_period=30"/>
+                        </endpoint>
+                    </call>
+                    <log level="custom">
+                        <property name="status" value="ENDPOINT HITTED"/>
+                        <property expression="$ctx:accept" name="CHECK ELSE"/>
+                    </log>
+                    <property name="out" scope="default" type="STRING" value="application/json"/>
+                    <switch source="$ctx:accept">
+                        <case regex="application/xml">
+                            <property name="messageType" scope="axis2" type="STRING" value="application/xml"/>
+                            <payloadFactory media-type="xml">
+                                <format>
+                                    <accessCredential xmlns="">
+                                        <access_token>$1</access_token>
+                                        <token_type>$2</token_type>
+                                        <expires_in>$3</expires_in>
+                                    </accessCredential>
+                                </format>
+                                <args>
+                                    <arg evaluator="xml" expression="//access_token"/>
+                                    <arg evaluator="xml" expression="//token_type"/>
+                                    <arg evaluator="xml" expression="//expires_in"/>
+                                </args>
+                            </payloadFactory>
+                            <property name="messageType" scope="axis2" type="STRING" value="application/xml"/>
+                        </case>
+                        <case regex="application/json">
+                            <log level="custom">
+                                <property name="CHECK" value="---------------------"/>
+                            </log>
+                            <payloadFactory media-type="json">
+                                <format>{"access_token": "$1","expires_in": "$2","token_type": "$3"}</format>
+                                <args>
+                                    <arg evaluator="json" expression="$.access_token"/>
+                                    <arg evaluator="json" expression="$.expires_in"/>
+                                    <arg evaluator="json" expression="$.token_type"/>
+                                </args>
+                            </payloadFactory>
+                        </case>
+                        <default/>
+                    </switch>
+                    <property expression="//expires_in" name="expire_time" scope="default" type="STRING"/>
+                    <property expression="//access_token" name="conf:Reso/Token.txt" scope="registry" type="STRING"/>
+                    <property expression="get-property('SYSTEM_TIME')+(get-property('expire_time')*1000)" name="conf:Reso/LastUpdatedTime.txt" scope="registry" type="STRING"/>
+                    <property expression="//token_type" name="conf:Reso/token_type.txt" scope="registry" type="STRING"/>
+                </else>
+            </filter>
+            <respond/>
+        </inSequence>
+        <outSequence/>
+        <faultSequence/>
+    </resource>
+</api>

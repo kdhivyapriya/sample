@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?><artifacts>
+    <artifact name="mediators" groupId="com.example.MediatorsExample.api" version="1.0.0" type="synapse/api" serverRole="EnterpriseServiceBus">
+        <file>src/main/synapse-config/api/mediators.xml</file>
+    </artifact>
+    <artifact name="SampleLocalEntry" groupId="com.example.MediatorsExample.local-entry" version="1.0.0" type="synapse/local-entry" serverRole="EnterpriseServiceBus">
+        <file>src/main/synapse-config/local-entries/SampleLocalEntry.xml</file>
+    </artifact>
+    <artifact name="LocalEntry" groupId="com.example.MediatorsExample.api" version="1.0.0" type="synapse/api" serverRole="EnterpriseServiceBus">
+        <file>src/main/synapse-config/api/LocalEntry.xml</file>
+    </artifact>
+    <artifact name="FindBook" groupId="com.example.MediatorsExample.api" version="1.0.0" type="synapse/api" serverRole="EnterpriseServiceBus">
+        <file>src/main/synapse-config/api/FindBook.xml</file>
+    </artifact>
+    <artifact name="ToGetFile" groupId="com.example.MediatorsExample.api" version="1.0.0" type="synapse/api" serverRole="EnterpriseServiceBus">
+        <file>src/main/synapse-config/api/ToGetFile.xml</file>
+    </artifact>
+    <artifact name="GetPdf" groupId="com.example.MediatorsExample.proxy-service" version="1.0.0" type="synapse/proxy-service" serverRole="EnterpriseServiceBus">
+        <file>src/main/synapse-config/proxy-services/GetPdf.xml</file>
+    </artifact>
+    <artifact name="CopyPdf" groupId="com.example.MediatorsExample.proxy-service" version="1.0.0" type="synapse/proxy-service" serverRole="EnterpriseServiceBus">
+        <file>src/main/synapse-config/proxy-services/CopyPdf.xml</file>
+    </artifact>
+    <artifact name="Sample" groupId="com.example.MediatorsExample.api" version="1.0.0" type="synapse/api" serverRole="EnterpriseServiceBus">
+        <file>src/main/synapse-config/api/Sample.xml</file>
+    </artifact>
+    <artifact name="SampleEndPoint" groupId="com.example.MediatorsExample.endpoint" version="1.0.0" type="synapse/endpoint" serverRole="EnterpriseServiceBus">
+        <file>src/main/synapse-config/endpoints/SampleEndPoint.xml</file>
+    </artifact>
+    <artifact name="MergeTwoFiles" groupId="com.example.MediatorsExample.proxy-service" version="1.0.0" type="synapse/proxy-service" serverRole="EnterpriseServiceBus">
+        <file>src/main/synapse-config/proxy-services/MergeTwoFiles.xml</file>
+    </artifact>
+    <artifact name="cacheMediatorProxyService" groupId="com.example.MediatorsExample.proxy-service" version="1.0.0" type="synapse/proxy-service" serverRole="EnterpriseServiceBus">
+        <file>src/main/synapse-config/proxy-services/cacheMediatorProxyService.xml</file>
+    </artifact>
+    <artifact name="CacheMediator" groupId="com.example.MediatorsExample.proxy-service" version="1.0.0" type="synapse/proxy-service" serverRole="EnterpriseServiceBus">
+        <file>src/main/synapse-config/proxy-services/CacheMediator.xml</file>
+    </artifact>
+    <artifact name="DataService" groupId="com.example.MediatorsExample.proxy-service" version="1.0.0" type="synapse/proxy-service" serverRole="EnterpriseServiceBus">
+        <file>src/main/synapse-config/proxy-services/DataService.xml</file>
+    </artifact>
+    <artifact name="DataService1" groupId="com.example.MediatorsExample.proxy-service" version="1.0.0" type="synapse/proxy-service" serverRole="EnterpriseServiceBus">
+        <file>src/main/synapse-config/proxy-services/DataService1.xml</file>
+    </artifact>
+    <artifact name="fault" groupId="com.example.MediatorsExample.proxy-service" version="1.0.0" type="synapse/proxy-service" serverRole="EnterpriseServiceBus">
+        <file>src/main/synapse-config/proxy-services/fault.xml</file>
+    </artifact>
+    <artifact name="FaultSequence" groupId="com.example.MediatorsExample.sequence" version="1.0.0" type="synapse/sequence" serverRole="EnterpriseServiceBus">
+        <file>src/main/synapse-config/sequences/FaultSequence.xml</file>
+    </artifact>
+    <artifact name="SDH-Hierachy" groupId="com.example.MediatorsExample.api" version="1.0.0" type="synapse/api" serverRole="EnterpriseServiceBus">
+        <file>src/main/synapse-config/api/SDH-Hierachy.xml</file>
+    </artifact>
+    <artifact name="AccessSequence" groupId="com.example.MediatorsExample.api" version="1.0.0" type="synapse/api" serverRole="EnterpriseServiceBus">
+        <file>src/main/synapse-config/api/AccessSequence.xml</file>
+    </artifact>
+    <artifact name="CreateSequence" groupId="com.example.MediatorsExample.sequence" version="1.0.0" type="synapse/sequence" serverRole="EnterpriseServiceBus">
+        <file>src/main/synapse-config/sequences/CreateSequence.xml</file>
+    </artifact>
+    <artifact name="DataSourceEndPoint" groupId="com.example.MediatorsExample.endpoint" version="1.0.0" type="synapse/endpoint" serverRole="EnterpriseServiceBus">
+        <file>src/main/synapse-config/endpoints/DataSourceEndPoint.xml</file>
+    </artifact>
+    <artifact name="IFW-Token-API" groupId="com.example.MediatorsExample.api" version="1.0.0" type="synapse/api" serverRole="EnterpriseServiceBus">
+        <file>src/main/synapse-config/api/IFW-Token-API.xml</file>
+    </artifact>
+    <artifact name="IFW-Token-API1" groupId="com.example.MediatorsExample.api" version="1.0.0" type="synapse/api" serverRole="EnterpriseServiceBus">
+        <file>src/main/synapse-config/api/IFW-Token-API1.xml</file>
+    </artifact>
+    <artifact name="SampleExample" groupId="com.example.MediatorsExample.api" version="1.0.0" type="synapse/api" serverRole="EnterpriseServiceBus">
+        <file>src/main/synapse-config/api/SampleExample.xml</file>
+    </artifact>
+</artifacts>

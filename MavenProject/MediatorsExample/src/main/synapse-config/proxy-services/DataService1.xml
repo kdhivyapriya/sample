@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<proxy name="DataService1" startOnLoad="true" transports="http https" xmlns="http://ws.apache.org/ns/synapse">
+    <target>
+        <inSequence>
+            <!--    <filter source="fn:contains($ctx:exception,'does not exist')" regex="true"> -->
+            <call>
+                <endpoint>
+                    <address uri="http://THMTP0071:8282/services/DataSource"/>
+                </endpoint>
+            </call>
+            <property expression="//*[local-name()='current_request_name']" name="error" scope="default" type="STRING"/>
+            <property expression="//*[local-name()='nested_exception']" name="exception" scope="default" type="STRING"/>
+            <filter xpath="fn:contains($ctx:exception,'Syntax error')">
+                <then>
+                    <property name="HTTP_SC" scope="axis2" type="STRING" value="400"/>
+                    <payloadFactory media-type="xml">
+                        <format>
+                            <Fault xmlns="">
+                                <code>400</code>
+                                <status>Syntax Error</status>
+                            </Fault>
+                        </format>
+                        <args/>
+                    </payloadFactory>
+                </then>
+                <else/>
+            </filter>
+            <switch source="get-property('error')">
+                <case regex="QuerySelect">
+                    <filter xpath="fn:contains($ctx:exception,'Table')">
+                        <then>
+                            <property name="HTTP_SC" scope="axis2" type="STRING" value="405"/>
+                            <payloadFactory media-type="xml">
+                                <format>
+                                    <Fault xmlns="">
+                                        <code>404</code>
+                                        <status>Table not found</status>
+                                    </Fault>
+                                </format>
+                                <args/>
+                            </payloadFactory>
+                        </then>
+                        <else>
+                            <filter xpath="fn:contains($ctx:exception,'Schema')">
+                                <then>
+                                    <property name="HTTP_SC" scope="axis2" type="STRING" value="401"/>
+                                    <payloadFactory media-type="xml">
+                                        <format>
+                                            <Fault>
+                                                <code>401</code>
+                                                <status>UnAuthorised User</status>
+                                            </Fault>
+                                        </format>
+                                        <args/>
+                                    </payloadFactory>
+                                </then>
+                                <else/>
+                            </filter>
+                        </else>
+                    </filter>
+                </case>
+                <case regex="QueryInsert">
+                    <filter xpath="fn:contains($ctx:exception,'length')">
+                        <then>
+                            <property name="HTTP_SC" scope="axis2" type="STRING" value="400"/>
+                            <payloadFactory media-type="xml">
+                                <format>
+                                    <Fault>
+                                        <code>400</code>
+                                        <status>Insert Less Than 20 charater in name</status>
+                                    </Fault>
+                                </format>
+                                <args/>
+                            </payloadFactory>
+                        </then>
+                        <else/>
+                    </filter>
+                </case>
+                <case regex="QueryCreate">
+                    <filter xpath="fn:contains($ctx:exception,'already exists')">
+                        <then>
+                            <property name="HTTP_SC" scope="axis2" type="STRING" value="400"/>
+                            <payloadFactory media-type="xml">
+                                <format>
+                                    <Fault>
+                                        <code>400</code>
+                                        <status>Table Already Exist</status>
+                                    </Fault>
+                                </format>
+                                <args/>
+                            </payloadFactory>
+                        </then>
+                        <else/>
+                    </filter>
+                </case>
+                <default/>
+            </switch>
+            <respond/>
+        </inSequence>
+        <outSequence/>
+        <faultSequence/>
+    </target>
+</proxy>

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<api context="/access/list" name="AccessSequence" xmlns="http://ws.apache.org/ns/synapse">
+    <resource methods="POST">
+        <inSequence>
+            <log level="custom">
+                <property name="CHECK" value="*****************"/>
+            </log>
+            <call>
+                <endpoint>
+                    <http method="post" uri-template="http://THMTP0071:8282/services/DataSource"/>
+                </endpoint>
+            </call>
+            <log level="custom">
+                <property name="CHECK" value="after call---------------"/>
+            </log>
+            <respond/>
+        </inSequence>
+        <outSequence/>
+        <faultSequence/>
+    </resource>
+</api>

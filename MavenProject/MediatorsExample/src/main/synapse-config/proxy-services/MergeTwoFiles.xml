@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<proxy name="MergeTwoFiles" startOnLoad="true" transports="http https" xmlns="http://ws.apache.org/ns/synapse">
+    <target>
+        <inSequence>
+            <!-- MERGER OPERATION -->
+            <!--   <property expression="json-eval( $.source)" name="sourcePath" scope="default" type="STRING"/>
+                <property expression="json-eval( $.destination)" name="destinationPath" scope="default" type="STRING"/>
+                <property expression="json-eval( $.filePattern)" name="fileFormat" scope="default" type="STRING"/>
+            <log>
+            <property name="check" expression="$ctx:sourcePath"/>
+            
+            </log>
+            <fileconnector.mergeFiles>
+    <source>{$ctx:sourcePath}</source>
+    <destination>{$ctx:destinationPath}</destination>
+    <filePattern>{$ctx:fileFormat}</filePattern>
+</fileconnector.mergeFiles> -->
+            <!--       APPEND OPERATION -->
+            <!-- <property expression="json-eval( $.destination)" name="destinationPath" scope="default" type="STRING"/>
+            <property expression="json-eval( $.inputContent)" name="input" scope="default" type="STRING"/>
+            <property name="position" scope="default" type="STRING" value="15"/>
+            <fileconnector.append>
+                <destination>{$ctx:destinationPath}</destination>
+                <inputContent>{$ctx:input}</inputContent>
+                <position>{$ctx:position}</position>
+            </fileconnector.append> -->
+            <!--        Archiving a file or folder -->
+            <!--  <property expression="json-eval( $.source)" name="sourcePath" scope="default" type="STRING"/>
+                <property expression="json-eval( $.destination)" name="destinationPath" scope="default" type="STRING"/>
+                <property name="inputContent" value="***************"/>
+                <property name="fileName" expression="json-eval( $.FileName)" scope="default" type="STRING"/>
+            <fileconnector.archives>
+    <source>{$ctx:sourcePath}</source>
+    <destination>{$ctx:destinationPath}</destination>
+    <inputContent>{$ctx:inputContent}</inputContent>
+    <fileName>{$ctx:fileName}</fileName>
+</fileconnector.archives>-->
+            <!--   CREATEING A FILE OR FOLDER -->
+            <!--  <property expression="json-eval( $.source)" name="sourcePath" scope="default" type="STRING"/>
+            <fileconnector.create>
+                <source>{$ctx:sourcePath}</source>
+            </fileconnector.create> -->
+            <!--   DELETE THE FILE OR FOLDER -->
+            <property expression="json-eval( $.source)" name="sourcePath" scope="default" type="STRING"/>
+            <!-- <property expression="json-eval($.Pattern)" name="filePattern" scope="default" type="STRING"/> -->
+            <fileconnector.delete>
+                <source>{$ctx:sourcePath}</source>
+            </fileconnector.delete>
+            <log>
+                <property expression="$body/*" name="xml_content"/>
+            </log>
+            <respond/>
+        </inSequence>
+        <outSequence/>
+        <faultSequence/>
+    </target>
+</proxy>

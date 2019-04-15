@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sequence name="FaultSequence" trace="disable" xmlns="http://ws.apache.org/ns/synapse">
+    <log level="custom">
+        <property name="----" value="inside sequence"/>
+    </log>
+    <!--   <property expression="//*[local-name()='ds_code']" name="error" scope="default" type="STRING"/>
+    <property expression="//*[local-name()='nested_exception']" name="exception" scope="default" type="STRING"/>
+    <filter regex="DATABASE_ERROR" source="get-property('error')">
+        <then>
+            <log level="custom">
+                <property name="***" value="Inside filter Sequence"/>
+            </log>
+            <payloadFactory media-type="xml">
+                <format>
+                    <ERROR>$1</ERROR>
+                </format>
+                <args>
+                    <arg evaluator="xml" expression="get-property('exception')"/>
+                </args>
+            </payloadFactory>
+        </then>
+        <else/>
+    </filter> -->
+</sequence>

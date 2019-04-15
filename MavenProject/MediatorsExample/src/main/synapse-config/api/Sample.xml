@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<api context="/ifw/list" name="Sample" xmlns="http://ws.apache.org/ns/synapse">
+    <resource methods="GET">
+        <inSequence>
+            <!--  <log>
+        <property name="ENDPOINT" expression="SampleEndPoint"/>
+        </log> -->
+            <call>
+                <endpoint key="SampleEndPoint"/>
+            </call>
+            <respond/>
+        </inSequence>
+        <outSequence>
+            <send/>
+        </outSequence>
+        <faultSequence/>
+    </resource>
+</api>

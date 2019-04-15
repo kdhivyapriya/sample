@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<proxy name="CopyPdf" startOnLoad="true" transports="http https" xmlns="http://ws.apache.org/ns/synapse">
+    <target>
+        <inSequence>
+            <property expression="json-eval( $.Source)" name="filename" scope="default" type="STRING"/>
+            <!--   <log>
+                <property expression="get-property('filename')" name="*****"/>
+            </log> -->
+            <property action="remove" name="PDFReader" scope="axis2"/>
+            <fileconnector.isFileExist>
+                <source>{$ctx:filename}</source>
+            </fileconnector.isFileExist>
+            <log level="full"/>
+            <property expression="//fileExist" name="status" scope="default" type="STRING"/>
+            <filter regex="false" source="get-property('status')">
+                <then>
+                    <property name="description" scope="default" type="STRING" value="File Not Found"/>
+                    <property name="ERROR_CODE" scope="default" type="STRING" value="101500"/>
+                    <property name="code" scope="default" type="STRING" value="404"/>
+                    <property expression="$trp:Accept" name="accept" scope="operation" type="STRING"/>
+                    <property name="HTTP_SC" scope="axis2" type="STRING" value="404"/>
+                    <sequence key="gov:/sequences/common/4.0/CommonFault-4_0.xml"/>
+                </then>
+                <else>
+                    <fileconnector.read>
+                        <source>{$ctx:filename}</source>
+                        <contentType>application/pdf</contentType>
+                    </fileconnector.read>
+                </else>
+            </filter>
+            <respond/>
+        </inSequence>
+        <outSequence/>
+        <faultSequence/>
+    </target>
+</proxy>
