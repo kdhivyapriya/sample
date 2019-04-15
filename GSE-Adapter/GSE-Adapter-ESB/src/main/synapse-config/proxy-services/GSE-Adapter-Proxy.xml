@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<proxy name="GSE-Adapter-Proxy" startOnLoad="true" transports="http https" xmlns="http://ws.apache.org/ns/synapse">
+    <target>
+        <inSequence>
+            <property expression="$trp:Accept" name="accept" scope="default" type="STRING"/>
+            <property expression="get-property('accept')" name="AcceptType" scope="default" type="STRING"/>
+            <filter regex="application/json" source="get-property('AcceptType')">
+                <then>
+                    <property name="messageType" scope="axis2" type="STRING" value="application/json"/>
+                    <payloadFactory media-type="json">
+                        <format>
+					 {
+						 "GSEAdapterAsyncResponse" : "SUCCESS" 
+						 }
+						
+					</format>
+                        <args/>
+                    </payloadFactory>
+                    <log>
+                        <property name="response" value="JSON"/>
+                    </log>
+                </then>
+                <else>
+                    <property name="messageType" scope="axis2" type="STRING" value="application/xml"/>
+                    <payloadFactory media-type="xml">
+                        <format>
+                            <Status xmlns="">
+                                <GSEAdapterAsyncResponse>SUCCESS</GSEAdapterAsyncResponse>
+                            </Status>
+                        </format>
+                        <args/>
+                    </payloadFactory>
+                    <log>
+                        <property name="response" value="XML"/>
+                    </log>
+                </else>
+            </filter>
+            <send/>
+        </inSequence>
+        <outSequence>
+            <aggregate>
+                <completeCondition>
+                    <messageCount max="-1" min="-1"/>
+                </completeCondition>
+                <onComplete enclosingElementProperty="root" expression="$body/*">
+                    <payloadFactory media-type="xml">
+                        <format>
+                            <gseProvisioningAdapterRequest xmlns="">$1
+                                <subscription-key>2c92c0f858ffef9001590149c4972469</subscription-key>
+                                <transcationId>0050568F-6E8D-11E7-FC46-02E71C7697E4</transcationId>
+                                <accessToken>rYr8u5dDjiJHqeLIqGS5s=</accessToken>
+                            </gseProvisioningAdapterRequest>
+                        </format>
+                        <args>
+                            <arg evaluator="xml" expression="$body/*"/>
+                        </args>
+                    </payloadFactory>
+                    <foreach expression="//GSEAdapterRequest">
+                        <sequence>
+                            <script language="js"><![CDATA[var message = mc.getPayloadXML();
+     delete message.accountName;
+     mc.setPayloadXML(message);]]></script>
+                            <script language="js"><![CDATA[var message = mc.getPayloadXML();
+     delete message.accountDisplayName;
+     mc.setPayloadXML(message);]]></script>
+                            <script language="js"><![CDATA[var message = mc.getPayloadXML();
+     delete message.address1;
+     mc.setPayloadXML(message);]]></script>
+                            <script language="js"><![CDATA[var message = mc.getPayloadXML();
+     delete message.city;
+     mc.setPayloadXML(message);]]></script>
+                            <script language="js"><![CDATA[var message = mc.getPayloadXML();
+     delete message.state;
+     mc.setPayloadXML(message);]]></script>
+                            <script language="js"><![CDATA[var message = mc.getPayloadXML();
+     delete message.zipCode;
+     mc.setPayloadXML(message);]]></script>
+                            <script language="js"><![CDATA[var message = mc.getPayloadXML();
+     delete message.country;
+     mc.setPayloadXML(message);]]></script>
+                            <script language="js"><![CDATA[var message = mc.getPayloadXML();
+     delete message.getUserEmail;
+     mc.setPayloadXML(message);]]></script>
+                        </sequence>
+                    </foreach>
+                    <property name="proper" scope="default">
+                        <multipleLanguageCode xmlns="">
+                            <communicationProfId>DEFAULTPROFILE</communicationProfId>
+                            <uimsLanguageCode>en</uimsLanguageCode>
+                        </multipleLanguageCode>
+                    </property>
+                    <enrich>
+                        <source clone="true" xpath="$ctx:proper"/>
+                        <target action="child" xpath="//fulfill"/>
+                    </enrich>
+                    <log level="full"/>
+                </onComplete>
+            </aggregate>
+            <send/>
+        </outSequence>
+        <faultSequence/>
+    </target>
+</proxy>
