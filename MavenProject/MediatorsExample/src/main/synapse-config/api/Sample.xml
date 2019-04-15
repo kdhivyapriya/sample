@@ -2,9 +2,9 @@
 <api context="/ifw/list" name="Sample" xmlns="http://ws.apache.org/ns/synapse">
     <resource methods="GET">
         <inSequence>
-            <!--  <log>
-        <property name="ENDPOINT" expression="SampleEndPoint"/>
-        </log> -->
+            <log>
+                <property expression="SampleEndPoint" name="ENDPOINT"/>
+            </log>
             <call>
                 <endpoint key="SampleEndPoint"/>
             </call>
